@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Exercise {
+  id          Int       @default(uuid()) @id
+  name        String
+  caution     String
+  // 이미지 혹은 영상
+  description String
+  usedMachine Machine   @relation(fields: [machineId], references: [id])
+  machineId   Int
+  createdAt   DateTime  @default(now())
+  updated     DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+// Machine에 맨몸 포함
+model Machine {
+  id        Int                 @default(uuid()) @id
+  name      String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  deletedAt DateTime?
+  exercises Exercise[]
+  classes   ClassesOnMachines[]
+}
+
+model Class {
+  id        Int                 @default(uuid()) @id
+  name      String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  deletedAt DateTime?
+  machines  ClassesOnMachines[]
+}
+
+model ClassesOnMachines {
+  machine   Machine @relation(fields: [machineId], references: [id])
+  machineId Int
+  class     Class   @relation(fields: [machineId], references: [id])
+  classId   Int
+  @@id([machineId, classId])
+}
+
+model Post {
+  id        Int       @default(uuid()) @id
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+enum Role {
+  USER
+  ADMIN
+}

@@ -1,0 +1,37 @@
+{
+  "name": "qufit-exercise-info-web-server",
+  "version": "1.0.0",
+  "description": "큐피트의 서버입니다.",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/tsc",
+    "devm": "NODE_ENV=development ts-node-dev --respawn src/index.ts",
+    "devw": "set NODE_ENV=development&& ts-node-dev --respawn src/index.ts",
+    "start:dev": "nodemon ./dist/index.js",
+    "start": "node ./dist/index.js",
+    "prod": "yarn build && yarn start",
+    "migrate": "npx prisma migrate save --name init --experimental && npx prisma migrate up --experimental",
+    "generate": "npx prisma generate",
+    "prisma": "npm run migrate && npm run generate",
+    "studio": "npx prisma studio --experimental"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quino0627/qufit-exercise-info-web-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quino0627/qufit-exercise-info-web-server/issues"
+  },
+  "homepage": "https://github.com/quino0627/qufit-exercise-info-web-server#readme",
+  "devDependencies": {
+    "@prisma/cli": "^2.0.0-beta.8",
+    "@types/node": "^14.0.11",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^2.0.0-beta.8"
+  }
+}
