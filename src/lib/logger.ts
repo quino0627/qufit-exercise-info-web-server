@@ -1,4 +1,5 @@
-import { GraphQLServer } from 'graphql-yoga';
+/* eslint-disable import/no-extraneous-dependencies */
+import { Request, Response, NextFunction } from 'express';
 import { createLogger, format, transports, config } from 'winston';
 import 'winston-daily-rotate-file';
 
@@ -53,8 +54,52 @@ export const logger = createLogger({
  * API 요청시 로깅
  * INFO Timestamp : Method Path : UID={user_id}
  */
-export const logApiRequest = (req: Request, res: Response): void => {
-  console.log('In LogAPIREQ', req, res);
+export const logApiRequest = (req: Request, res: Response, next: NextFunction): void => {
   const { method } = req;
-  //   logger.info(`${method} ${path} : UID=${userID}`);
+  logger.info(`${method}`);
+  next();
 };
+
+/**
+ * 정의된 에러 발생시 로깅
+ * WARNING Timestamp : Method Path : UID={user_id} : ErrorCode : AllParameters
+ */
+export const logDefinedError = (req: Request, res: Response, errorMessage: string): void => {
+  const parameter = {
+    ...req.params,
+    ...req.body,
+    ...req.query,
+  };
+
+  // Password 평문 로깅 방지
+  if ('password' in parameter) parameter.password = '비밀번호는 너굴맨이 처리햇다';
+
+  const { method, path } = req;
+  const userID = res.locals.user ? res.locals.user.user_id : undefined;
+
+  logger.warning(
+    `${method} ${path} : UID=${userID} : ${errorMessage} : ${JSON.stringify(parameter)}`,
+  );
+};
+
+/**
+ * 정의되지 않은 에러 발생시 로깅
+ * CRIT Timestamp : Method Path : UID={user_id} : ErrorMessage : AllParameters
+ */
+export const logUndefinedError = (req: Request, res: Response, error: Error): void => {
+  const parameter = {
+    ...req.params,
+    ...req.body,
+    ...req.query,
+  };
+
+  // Password 평문 로깅 방지
+  if ('password' in parameter) parameter.password = '비밀번호는 너굴맨이 처리햇다';
+
+  const { method, path } = req;
+  const userID = res.locals.user ? res.locals.user.user_id : undefined;
+
+  logger.crit(`${method} ${path} : UID=${userID} : ${error} : ${JSON.stringify(parameter)}`);
+};
+
+export default logger;

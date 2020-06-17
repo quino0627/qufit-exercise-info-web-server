@@ -1,0 +1,41 @@
+type Query {
+    dummy:String
+}
+
+type Exercise{
+    id:          Int!
+    name:        String!
+    caution:     String!
+    description: String!
+    usedMachine: Machine!  
+    machineId:   Int!
+    createdAt:   Int! 
+    updated:     Int!
+    deletedAt:   Int
+}
+
+type Machine {
+    id:        Int!      
+    name:      String!
+    createdAt: Int!
+    updatedAt: Int! 
+    deletedAt: Int
+    exercises: [Exercise!]!
+    classes:   [ClassesOnMachines!]!
+}
+
+type Class {
+    id:        Int!
+    name:      String!
+    createdAt: Int!
+    updatedAt: Int!
+    deletedAt: Int
+    machines:  [ClassesOnMachines!]!
+}
+
+type ClassesOnMachines {
+    machine:   Machine!
+    machineId: Int!
+    class:     Class!
+    classId:   Int!
+}
